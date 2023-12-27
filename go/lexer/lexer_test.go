@@ -14,10 +14,10 @@ func TestNextToken(t *testing.T) {
 	}{
 		{token.ASSIGN, "="},
 		{token.PLUS, "+"},
-		{token.LBRACE, ")"},
-		{token.RBRACE, ")"},
-		{token.LPAREN, "{"},
-		{token.RPAREN, "}"},
+		{token.LPAREN, "("},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RBRACE, "}"},
 		{token.COMMA, ","},
 		{token.SEMICOLON, ";"},
 	}
