@@ -1,3 +1,3 @@
-module github.com/RichardBieringa/writing-a-compiler-in-x
+module monkey
 
 go 1.21.5
