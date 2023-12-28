@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"monkey/token"
 )
 
@@ -105,8 +104,6 @@ func (l *Lexer) NextToken() token.Token {
 			t.Type = token.ILLEGAL
 		}
 	}
-
-	fmt.Printf("Lexed: %+v\n", t)
 
 	l.readChar()
 	return t
