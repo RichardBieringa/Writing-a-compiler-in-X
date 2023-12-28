@@ -57,6 +57,9 @@ func (l *Lexer) NextToken() token.Token {
 		t.Type = token.LBRACE
 	case '}':
 		t.Type = token.RBRACE
+	case 0:
+		t.Literal = ""
+		t.Type = token.EOF
 	default:
 		if isLetter(l.currentChar) {
 			t.Literal = l.readIdentifier()
@@ -92,6 +95,7 @@ func isWhitespace(ch byte) bool {
 func getIdentifier(identifier string) token.TokenType {
 	keywords := map[string]token.TokenType{
 		"let": token.LET,
+		"fn":  token.FUNCTION,
 	}
 
 	tokenType, ok := keywords[identifier]

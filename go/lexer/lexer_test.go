@@ -98,11 +98,11 @@ let result = add(five, ten);
 		actual := lexer.NextToken()
 
 		if actual.Type != expected.Type {
-			t.Fatalf("tests[%d] - incorrect token type: expected=%q, got=%q", i, expected.Type, actual.Type)
+			t.Fatalf("tests[%d] - incorrect token type: expected=%q, got=%q (value=%x)", i, expected.Type, actual.Type, actual.Literal)
 		}
 
 		if actual.Literal != expected.Literal {
-			t.Fatalf("tests[%d] - incorrect token literal: expected=%q, got=%q", i, expected.Type, actual.Type)
+			t.Fatalf("tests[%d] - incorrect token literal: expected=%q, got=%q", i, expected.Literal, actual.Literal)
 		}
 	}
 }
