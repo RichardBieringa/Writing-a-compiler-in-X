@@ -50,7 +50,13 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.currentChar {
 	case '=':
-		t.Type = token.ASSIGN
+		if l.peekChar() == '=' {
+			t.Type = token.EQ
+			t.Literal = string(l.currentChar) + string(l.peekChar())
+			l.readChar()
+		} else {
+			t.Type = token.ASSIGN
+		}
 	case '+':
 		t.Type = token.PLUS
 	case '-':
@@ -60,7 +66,13 @@ func (l *Lexer) NextToken() token.Token {
 	case '*':
 		t.Type = token.ASTERISK
 	case '!':
-		t.Type = token.BANG
+		if l.peekChar() == '=' {
+			t.Type = token.NOT_EQ
+			t.Literal = string(l.currentChar) + string(l.peekChar())
+			l.readChar()
+		} else {
+			t.Type = token.BANG
+		}
 	case ',':
 		t.Type = token.COMMA
 	case ';':
@@ -120,7 +132,7 @@ func getIdentifier(identifier string) token.TokenType {
 		"false":  token.FALSE,
 		"return": token.RETURN,
 		"if":     token.IF,
-		"else":   token.IF,
+		"else":   token.ELSE,
 	}
 
 	tokenType, ok := keywords[identifier]

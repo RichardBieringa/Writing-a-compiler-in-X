@@ -149,7 +149,7 @@ if (5 < 10) {
 		}
 
 		if actual.Literal != expected.Literal {
-			t.Fatalf("tests[%d] - incorrect token literal: expected=%q, got=%q", i, expected.Literal, actual.Type)
+			t.Fatalf("tests[%d] - incorrect token literal: expected=%q, got=%q", i, expected.Literal, actual.Literal)
 		}
 	}
 }
