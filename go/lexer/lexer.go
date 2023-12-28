@@ -33,6 +33,8 @@ func (l *Lexer) readChar() {
 }
 
 func (l *Lexer) NextToken() token.Token {
+	l.eatWhiteSpace()
+
 	t := token.Token{
 		Literal: string(l.currentChar),
 	}
@@ -58,6 +60,9 @@ func (l *Lexer) NextToken() token.Token {
 		if isLetter(l.currentChar) {
 			t.Literal = l.readIdentifier()
 			t.Type = getIdentifier(t.Literal)
+		} else if isNumber(l.currentChar) {
+			t.Literal = l.readNumber()
+			t.Type = token.INT
 		} else {
 			t.Type = token.ILLEGAL
 		}
@@ -73,6 +78,10 @@ func isLetter(ch byte) bool {
 
 func isNumber(ch byte) bool {
 	return ch >= '0' && ch <= '9'
+}
+
+func isWhitespace(ch byte) bool {
+	return ch == ' ' || ch == '\t' || ch == '\n'
 }
 
 func getIdentifier(identifier string) token.TokenType {
@@ -96,4 +105,20 @@ func (l *Lexer) readIdentifier() string {
 	}
 
 	return l.input[left:l.position]
+}
+
+func (l *Lexer) readNumber() string {
+	left := l.position
+
+	for isNumber(l.currentChar) {
+		l.readChar()
+	}
+
+	return l.input[left:l.position]
+}
+
+func (l *Lexer) eatWhiteSpace() {
+	for isWhitespace(l.currentChar) {
+		l.readChar()
+	}
 }
