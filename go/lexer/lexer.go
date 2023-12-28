@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"monkey/token"
 )
 
@@ -60,13 +61,17 @@ func (l *Lexer) NextToken() token.Token {
 		if isLetter(l.currentChar) {
 			t.Literal = l.readIdentifier()
 			t.Type = getIdentifier(t.Literal)
+			return t
 		} else if isNumber(l.currentChar) {
 			t.Literal = l.readNumber()
 			t.Type = token.INT
+			return t
 		} else {
 			t.Type = token.ILLEGAL
 		}
 	}
+
+	fmt.Printf("Lexed: %+v\n", t)
 
 	l.readChar()
 	return t
