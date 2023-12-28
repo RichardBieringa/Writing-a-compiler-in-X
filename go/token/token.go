@@ -17,8 +17,12 @@ const (
 	INT   = "INT"   // 1343456
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	SLASH    = "/"
+	ASTERISK = "*"
+	BANG     = "!"
 
 	// Delimiters
 	COMMA     = ","
@@ -29,7 +33,20 @@ const (
 	LBRACE = "{"
 	RBRACE = "}"
 
+	// Comparison
+	GT     = ">"
+	LT     = "<"
+	EQ     = "=="
+	NOT_EQ = "!="
+
+	// Bools
+	FALSE = "FALSE"
+	TRUE  = "TRUE"
+
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	RETURN   = "RETURN"
+	IF       = "IF"
+	ELSE     = "ELSE"
 )
