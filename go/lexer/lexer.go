@@ -53,6 +53,14 @@ func (l *Lexer) NextToken() token.Token {
 		t.Type = token.ASSIGN
 	case '+':
 		t.Type = token.PLUS
+	case '-':
+		t.Type = token.MINUS
+	case '/':
+		t.Type = token.SLASH
+	case '*':
+		t.Type = token.ASTERISK
+	case '!':
+		t.Type = token.BANG
 	case ',':
 		t.Type = token.COMMA
 	case ';':
@@ -65,6 +73,10 @@ func (l *Lexer) NextToken() token.Token {
 		t.Type = token.LBRACE
 	case '}':
 		t.Type = token.RBRACE
+	case '<':
+		t.Type = token.LT
+	case '>':
+		t.Type = token.GT
 	case 0:
 		t.Literal = ""
 		t.Type = token.EOF
@@ -102,8 +114,13 @@ func isWhitespace(ch byte) bool {
 
 func getIdentifier(identifier string) token.TokenType {
 	keywords := map[string]token.TokenType{
-		"let": token.LET,
-		"fn":  token.FUNCTION,
+		"let":    token.LET,
+		"fn":     token.FUNCTION,
+		"true":   token.TRUE,
+		"false":  token.FALSE,
+		"return": token.RETURN,
+		"if":     token.IF,
+		"else":   token.IF,
 	}
 
 	tokenType, ok := keywords[identifier]
