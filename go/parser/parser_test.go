@@ -41,6 +41,8 @@ let foobar = 8383838;
 }
 
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
+	t.Logf("testLetStatement: %+v, name=%q", statement, name)
+
 	if statement.TokenLiteral() != "let" {
 		t.Errorf("token.Literal was not 'let'. got=%q", statement.TokenLiteral())
 		return false
