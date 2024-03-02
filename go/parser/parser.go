@@ -18,6 +18,7 @@
 package parser
 
 import (
+	"fmt"
 	"log/slog"
 	"monkey/ast"
 	"monkey/lexer"
@@ -30,13 +31,18 @@ import (
 type Parser struct {
 	l *lexer.Lexer
 
+	errors []string // Holds any errors that occured during parsing
+
 	currentToken token.Token // The current token that the parser is consuming
 	peekToken    token.Token // The next token, used for 1 node lookahead
 }
 
 func New(l *lexer.Lexer) *Parser {
 	slog.Debug("Constructed a Parser")
-	parser := &Parser{l: l}
+	parser := &Parser{
+		l:      l,
+		errors: []string{},
+	}
 
 	// reads the first two tokens such that
 	// currentToken and peekToken are set
@@ -61,19 +67,22 @@ func (p *Parser) peekTokenIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
 }
 
-// assert the peek token, and consume the current token
+// asserts that the peekToken matches the expected token type
 func (p *Parser) expectPeek(tokenType token.TokenType) bool {
 	if p.peekTokenIs(tokenType) {
 		p.nextToken()
 		return true
 	}
-	slog.Info(
-		"Expect Peek",
-		"expected", tokenType,
-		"actual", p.peekToken.Type,
-	)
 
+	p.peekError(tokenType)
 	return false
+}
+
+func (p *Parser) peekError(tokenType token.TokenType) {
+	err := fmt.Sprintf("Expected next token to be %q, received: %q",
+		tokenType, p.peekToken)
+
+	p.errors = append(p.errors, err)
 }
 
 // Parses the source code into one AST
@@ -98,6 +107,11 @@ func (p *Parser) ParseProgram() *ast.Program {
 	}
 
 	return program
+}
+
+// Returns a list of errors the parser encoutered
+func (p *Parser) Errors() []string {
+	return p.errors
 }
 
 // Tries parsing a statement based on the current token

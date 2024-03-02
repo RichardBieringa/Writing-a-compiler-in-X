@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+	"go/token"
 	"monkey/ast"
 	"monkey/lexer"
 	"testing"
@@ -16,6 +18,7 @@ let foobar = 8383838;
 	parse := New(lex)
 
 	program := parse.ParseProgram()
+	checkParserErrors(t, parse)
 
 	if program == nil {
 		t.Fatal("ParseProgram returned nil")
@@ -40,11 +43,69 @@ let foobar = 8383838;
 	}
 }
 
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+
+	if len(errors) == 0 {
+		return
+	}
+
+	t.Errorf("Parsing the program resulted in %d errors", len(errors))
+
+	for i, err := range errors {
+		t.Errorf("err[%d]: %q", i, err)
+	}
+
+	t.FailNow()
+}
+
+func TestParseError(t *testing.T) {
+	input := `
+let x 5;
+let y == 10;
+let foobar =;
+`
+	lex := lexer.New(input)
+	parse := New(lex)
+
+	program := parse.ParseProgram()
+
+	if program == nil {
+		t.Fatal("ParseProgram returned nil")
+	}
+
+	if len(program.Statements) != 0 {
+		t.Error(program.Statements)
+		t.Fatalf("Parse program did not return the correct amount of statements. Expected: %v, Got: %v", 0, len(program.Statements))
+	}
+
+	errors := parse.Errors()
+
+	if len(errors) != 3 {
+		t.Fatalf("Parse program did not return the correct amount of errors. Excepted: %d, got %d", 3, len(errors))
+	}
+
+	tests := []struct {
+		errMessage string
+	}{
+		{fmt.Sprintf("Expected next token to be %q, received %q", token.IDENT, token.INT)},
+		{fmt.Sprintf("Expected next token to be %q, received %q", token.IDENT, token.INT)},
+		{fmt.Sprintf("Expected next token to be %q, received %q", token.IDENT, token.INT)},
+	}
+
+	for i, tt := range tests {
+		if errors[i] != tt.errMessage {
+			t.Fatalf("err[%d]: incorrect error message received. Expected: %q, got: %q",
+				i, tt.errMessage, errors[i])
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	t.Logf("testLetStatement: %+v, name=%q", statement, name)
 
 	if statement.TokenLiteral() != "let" {
-		t.Errorf("token.Literal was not 'let'. got=%q", statement.TokenLiteral())
+		t.Errorf("token.Literal was not 'let'. got=%+v", statement.TokenLiteral())
 		return false
 	}
 
