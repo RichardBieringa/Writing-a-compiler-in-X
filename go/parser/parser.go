@@ -1,3 +1,20 @@
+// Pagage parser contains a recursive descent parser implementation
+// for the monkey programming language
+//
+// The parser constructs an Abstract Syntax Tree (AST) from a series of tokens
+// produced by the lexer. It aims to accurately represent the program's source
+// code through some of the language's rules.
+//
+// Example of the parsing process
+// -- done by lexer
+// source code `let x = 5;`
+// tokens = `[LET, IDENTIFIER , EQ, INT, SEMICOLON]`;
+// -- done by parser
+// AST:
+// - PROGRAM_NODE
+//   - LET_STATEMENT_NODE
+//   - NAME = IDENTIFIER_NODE
+//   - VALUE = EXPRESSION_NODE
 package parser
 
 import (
@@ -7,11 +24,14 @@ import (
 	"monkey/token"
 )
 
+// The Parses uses the tokens produces by the lexer
+// this implementation only looks at the current, and next token (1 lookahead)
+// which means that we can only the type of node by looking at these 2 tokens
 type Parser struct {
 	l *lexer.Lexer
 
-	currentToken token.Token
-	peekToken    token.Token
+	currentToken token.Token // The current token that the parser is consuming
+	peekToken    token.Token // The next token, used for 1 node lookahead
 }
 
 func New(l *lexer.Lexer) *Parser {
