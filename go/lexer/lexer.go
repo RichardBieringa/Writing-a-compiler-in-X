@@ -1,3 +1,21 @@
+// Pagage lexer contains an implementation of the lexer for the monkey
+// programing language.
+//
+// The Lexer, sometimes called tokenizer or scanner, consumes the sources code
+// of a program in textual form, and produces meaningful tokens. These tokens
+// can range from language specific keywords such as `function` or `return` to
+// identifiers used in variables and common symbols that carry a meaning.
+//
+// It converts text like `for(int i=0;i <3; ++i)` to a tokens that make it
+// easier to work with, deal with white space, etc.
+// Example:
+// for = FOR
+// ( = OPEN_PAREN
+// int = SYMBOL
+// i = IDENTIFIER
+// 0 = NUMBER
+// ; = SEMI_COLON
+// etc...
 package lexer
 
 import (
