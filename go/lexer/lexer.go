@@ -6,6 +6,12 @@
 // can range from language specific keywords such as `function` or `return` to
 // identifiers used in variables and common symbols that carry a meaning.
 //
+// During the tokenization/lexing process we go over the input text, determine
+// the type of token, and create a data structure to hold the type of token and
+// the actual string literal content of it. This is useful for example in the
+// case of an identifier or a number, where we want to know which number it,
+// represented or wich identifier was used to store a value.
+//
 // It converts text like `for(int i=0;i <3; ++i)` to a tokens that make it
 // easier to work with, deal with white space, etc.
 // Example:

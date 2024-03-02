@@ -1,3 +1,12 @@
+// Package token contains the various types of tokens used in the monkey
+// programming language
+//
+// These tokens are constructed by the Lexer when it consumes the source code.
+// Which basically means, trying to map the text to some meaninful concept.
+//
+// There are various kinds of Tokens that we try to identify, for example
+// language specific keywords such as 'return', symbols that carry a meaning
+// as parenthesis, or identifiers for variables or functions.
 package token
 
 // Represents the type of the token, e.g. an INT or an IDENTIFIER
