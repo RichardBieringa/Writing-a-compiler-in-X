@@ -37,6 +37,77 @@ func TestNextToken(t *testing.T) {
 	}
 }
 
+func TestMoreSourceCode(t *testing.T) {
+	input := `let myIdentifier = 5;`
+
+	lexer := New(input)
+
+	tests := []struct {
+		Type     token.TokenType
+		Literal  string
+		Position int
+		PeekChar byte
+	}{
+		{
+			Type:     token.LET,
+			Literal:  "let",
+			Position: 3,
+			PeekChar: 'm',
+		},
+		{
+			Type:     token.IDENT,
+			Literal:  "myIdentifier",
+			Position: 16,
+			PeekChar: '=',
+		},
+		{
+			Type:     token.ASSIGN,
+			Literal:  "=",
+			Position: 18,
+			PeekChar: '5',
+		},
+		{
+			Type:     token.INT,
+			Literal:  "5",
+			Position: 20,
+			PeekChar: '\x00',
+		},
+		{
+			Type:     token.SEMICOLON,
+			Literal:  ";",
+			Position: 20,
+			PeekChar: '\x00',
+		},
+		{
+			Type:     token.EOF,
+			Literal:  "",
+			Position: 20,
+			PeekChar: '\x00',
+		},
+	}
+
+	for i, testCase := range tests {
+
+		current := lexer.NextToken()
+
+		if current.Type != testCase.Type {
+			t.Fatalf("Test[%d] - incorrect token type: expected: %q, got: %q", i, testCase.Type, current.Type)
+		}
+
+		if current.Literal != testCase.Literal {
+			t.Fatalf("Test[%d] - incorrect token literal: expected: %q, got: %q", i, testCase.Literal, current.Literal)
+		}
+
+		if lexer.position != testCase.Position {
+			t.Fatalf("Test[%d] - incorrect position: expected: %d, got: %d", i, testCase.Position, lexer.position)
+		}
+
+		if lexer.peekChar() != testCase.PeekChar {
+			t.Fatalf("Test[%d] - incorrect peekchar: expected: %q, got: %q", i, testCase.PeekChar, lexer.peekChar())
+		}
+	}
+}
+
 func TestSourceCode(t *testing.T) {
 	input := `let five = 5;
 let ten = 10;
