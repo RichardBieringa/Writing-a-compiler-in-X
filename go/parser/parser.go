@@ -81,8 +81,9 @@ func (p *Parser) expectPeek(tokenType token.TokenType) bool {
 // Each of these `Statements` are tree-like structures that contain
 // other `Statements` and/or `Expressions`
 func (p *Parser) ParseProgram() *ast.Program {
-	program := &ast.Program{}
-	program.Statements = []ast.Statement{}
+	program := &ast.Program{
+		Statements: []ast.Statement{},
+	}
 
 	// Look through all tokens of the lexer, try to produce statements
 	for p.currentToken.Type != token.EOF {
