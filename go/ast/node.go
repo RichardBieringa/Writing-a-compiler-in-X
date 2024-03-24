@@ -10,6 +10,9 @@ package ast
 type Node interface {
 	// Only used for debugging
 	TokenLiteral() string
+
+	// Used for printing/debugging AST nodes
+	String() string
 }
 
 // An expression is a value producing node
