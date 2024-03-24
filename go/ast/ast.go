@@ -39,3 +39,13 @@ type ReturnStatement struct {
 
 func (n *ReturnStatement) statementNode()       {}
 func (n *ReturnStatement) TokenLiteral() string { return n.Token.Literal }
+
+// A line that only contains some expression
+// Example: `x + 10;`
+type ExpressionStatement struct {
+	Token token.Token // Token.IDENT
+	Value *Expression
+}
+
+func (n *ExpressionStatement) statementNode()       {}
+func (n *ExpressionStatement) TokenLiteral() string { return n.Token.Literal }
