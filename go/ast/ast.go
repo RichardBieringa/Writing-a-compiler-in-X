@@ -29,3 +29,13 @@ type Identifier struct {
 // Identifier is an expression to allow `let a = anotherVar`
 func (n *Identifier) expressionNode()      {}
 func (n *Identifier) TokenLiteral() string { return n.Token.Literal }
+
+// A return statement returns a value
+// Example: `return add(5);`
+type ReturnStatement struct {
+	Token token.Token // Token.RETURN
+	Value *Expression
+}
+
+func (n *ReturnStatement) statementNode()       {}
+func (n *ReturnStatement) TokenLiteral() string { return n.Token.Literal }
