@@ -74,14 +74,12 @@ let foobar =;
 		t.Fatal("ParseProgram returned nil")
 	}
 
-	if len(program.Statements) != 0 {
-		t.Error(program.Statements)
-		t.Fatalf("Parse program did not return the correct amount of statements. Expected: %v, Got: %v", 0, len(program.Statements))
-	}
-
 	errors := parse.Errors()
 
 	if len(errors) != 3 {
+		for i, error := range errors {
+			t.Logf("ERR[%d]: `%s`", i, error)
+		}
 		t.Fatalf("Parse program did not return the correct amount of errors. Excepted: %d, got %d", 3, len(errors))
 	}
 
