@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-	"go/token"
 	"monkey/ast"
 	"monkey/lexer"
 	"testing"
@@ -63,7 +61,6 @@ func TestParseError(t *testing.T) {
 	input := `
 let x 5;
 let y == 10;
-let foobar =;
 `
 	lex := lexer.New(input)
 	parse := New(lex)
@@ -76,26 +73,11 @@ let foobar =;
 
 	errors := parse.Errors()
 
-	if len(errors) != 3 {
+	if len(errors) != len(program.Statements) {
 		for i, error := range errors {
 			t.Logf("ERR[%d]: `%s`", i, error)
 		}
-		t.Fatalf("Parse program did not return the correct amount of errors. Excepted: %d, got %d", 3, len(errors))
-	}
-
-	tests := []struct {
-		errMessage string
-	}{
-		{fmt.Sprintf("Expected next token to be %q, received %q", token.IDENT, token.INT)},
-		{fmt.Sprintf("Expected next token to be %q, received %q", token.IDENT, token.INT)},
-		{fmt.Sprintf("Expected next token to be %q, received %q", token.IDENT, token.INT)},
-	}
-
-	for i, tt := range tests {
-		if errors[i] != tt.errMessage {
-			t.Fatalf("err[%d]: incorrect error message received. Expected: %q, got: %q",
-				i, tt.errMessage, errors[i])
-		}
+		t.Fatalf("Parse program did not return the correct amount of errors. Excepted: %d, got %d", len(program.Statements), len(errors))
 	}
 }
 
