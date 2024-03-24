@@ -40,20 +40,20 @@ func (n *LetStatement) String() string {
 }
 
 type Identifier struct {
-	Token token.Token // token.IDENT
-	Value string
+	Token      token.Token // token.IDENT
+	Identifier string
 }
 
 // Identifier is an expression to allow `let a = anotherVar`
 func (n *Identifier) expressionNode()      {}
 func (n *Identifier) TokenLiteral() string { return n.Token.Literal }
-func (n *Identifier) String() string       { return n.Value }
+func (n *Identifier) String() string       { return n.Identifier }
 
 // A return statement returns a value
 // Example: `return add(5);`
 type ReturnStatement struct {
-	Token token.Token // Token.RETURN
-	Value Expression
+	Token      token.Token // Token.RETURN
+	Expression Expression
 }
 
 func (n *ReturnStatement) statementNode()       {}
@@ -63,8 +63,8 @@ func (n *ReturnStatement) String() string {
 
 	out.WriteString(n.TokenLiteral() + " ")
 
-	if n.Value != nil {
-		out.WriteString(n.Value.String())
+	if n.Expression != nil {
+		out.WriteString(n.Expression.String())
 	}
 
 	out.WriteString(";")
@@ -74,15 +74,15 @@ func (n *ReturnStatement) String() string {
 // A line that only contains some expression
 // Example: `x + 10;`
 type ExpressionStatement struct {
-	Token token.Token // Token.IDENT
-	Value Expression
+	Token      token.Token // Token.IDENT
+	Expression Expression
 }
 
 func (n *ExpressionStatement) statementNode()       {}
 func (n *ExpressionStatement) TokenLiteral() string { return n.Token.Literal }
 func (n *ExpressionStatement) String() string {
-	if n.Value != nil {
-		return n.Value.String()
+	if n.Expression != nil {
+		return n.Expression.String()
 	}
 
 	return ""
