@@ -216,6 +216,73 @@ func TestPrefixExpressions(t *testing.T) {
 	}
 }
 
+func TestInfixExpressions(t *testing.T) {
+	testCases := []struct {
+		input    string
+		left     int64
+		operator string
+		right    int64
+	}{
+		{"5 + 5;", 5, "+", 5},
+		{"5 - 5;", 5, "-", 5},
+		{"5 * 5;", 5, "*", 5},
+		{"5 / 5;", 5, "/", 5},
+		{"5 > 5;", 5, ">", 5},
+		{"5 < 5;", 5, "<", 5},
+		{"5 == 5;", 5, "==", 5},
+		{"5 != 5;", 5, "!=", 5},
+	}
+
+	for _, testCase := range testCases {
+		parser := New(lexer.New(testCase.input))
+
+		program := parser.ParseProgram()
+
+		if program == nil {
+			t.Fatalf("Parsing the program failed")
+		}
+
+		checkParserErrors(t, parser)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("Expected one statement in the program, got=`%d`", len(program.Statements))
+		}
+
+		statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("Expected the node to be an ast.ExpressionStatement, got=`%T`", program.Statements[0])
+		}
+
+		expression, ok := statement.Expression.(*ast.InfixExpression)
+		if !ok {
+			t.Fatalf("Expected the node to be an ast.InfixExpression, got=`%T`", statement.Expression)
+		}
+
+		// operator
+		if expression.Operator != testCase.operator {
+			t.Fatalf("Expected ast.InfixExpression.Operator to equal %q, got=%q", testCase.operator, expression.operator)
+		}
+
+		// left
+		left, ok := expression.Left.(*ast.IntegerLiteral)
+		if !ok {
+			t.Fatalf("Expected ast.InfixExpression.Left to be an ast.IntegerLiteral, got=`%T`", expression.Left)
+		}
+		if left.Value != testCase.left {
+			t.Fatalf("Expected ast.InfixExpression.Left's value to equal `%d`, got=`%d`", testCase.left, left.Value)
+		}
+
+		// right
+		right, ok := expression.Left.(*ast.IntegerLiteral)
+		if !ok {
+			t.Fatalf("Expected ast.InfixExpression.Right to be an ast.IntegerLiteral, got=`%T`", expression.Right)
+		}
+		if right.Value != testCase.left {
+			t.Fatalf("Expected ast.InfixExpression.Right's value to equal `%d`, got=`%d`", testCase.right, right.Value)
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	t.Logf("testLetStatement: %+v, name=%q", statement, name)
 
