@@ -400,7 +400,7 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 
 		actual := program.String()
 		if actual != testCase.expected {
-			t.Errorf("expcted=%q, got=%q", testCase.expected, actual)
+			t.Errorf("expected=%q, got=%q", testCase.expected, actual)
 		}
 	}
 }
