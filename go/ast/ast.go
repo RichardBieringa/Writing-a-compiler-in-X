@@ -118,3 +118,30 @@ func (n *PrefixExpression) String() string {
 
 	return out.String()
 }
+
+type InfixExpression struct {
+	Token    token.Token
+	Left     Expression
+	Operator string
+	Right    Expression
+}
+
+func (n *InfixExpression) expressionNode()      {}
+func (n *InfixExpression) TokenLiteral() string { return n.Token.Literal }
+func (n *InfixExpression) String() string {
+	var out bytes.Buffer
+
+	if n.Left != nil {
+		out.WriteString(n.Left.String())
+	}
+
+	out.WriteString(" " + n.Operator + " ")
+
+	if n.Right != nil {
+		out.WriteString(n.Left.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
