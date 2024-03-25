@@ -260,7 +260,7 @@ func TestInfixExpressions(t *testing.T) {
 
 		// operator
 		if expression.Operator != testCase.operator {
-			t.Fatalf("Expected ast.InfixExpression.Operator to equal %q, got=%q", testCase.operator, expression.operator)
+			t.Fatalf("Expected ast.InfixExpression.Operator to equal %q, got=%q", testCase.operator, expression.Operator)
 		}
 
 		// left
