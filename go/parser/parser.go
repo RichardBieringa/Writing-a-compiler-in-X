@@ -23,6 +23,7 @@ import (
 	"monkey/ast"
 	"monkey/lexer"
 	"monkey/token"
+	"strconv"
 )
 
 type (
@@ -59,6 +60,7 @@ func New(l *lexer.Lexer) *Parser {
 	}
 
 	parser.registerPrefixParseFn(token.IDENT, parser.parseIdentifier)
+	parser.registerPrefixParseFn(token.INT, parser.parseIntegerLiteral)
 
 	// reads the first two tokens such that
 	// currentToken and peekToken are set
@@ -240,5 +242,18 @@ func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{
 		Token:      p.currentToken,
 		Identifier: p.currentToken.Literal,
+	}
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	val, err := strconv.ParseInt(p.currentToken.Literal, 10, 64)
+	if err != nil {
+		p.errors = append(p.errors, err.Error())
+		return nil
+	}
+
+	return &ast.IntegerLiteral{
+		Token: p.currentToken,
+		Value: val,
 	}
 }
