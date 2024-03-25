@@ -96,3 +96,25 @@ type IntegerLiteral struct {
 func (n *IntegerLiteral) expressionNode()      {}
 func (n *IntegerLiteral) TokenLiteral() string { return n.Token.Literal }
 func (n *IntegerLiteral) String() string       { return n.Token.Literal }
+
+type PrefixExpression struct {
+	Token    token.Token
+	Operator string
+	Value    Expression
+}
+
+func (n *PrefixExpression) expressionNode()      {}
+func (n *PrefixExpression) TokenLiteral() string { return n.Token.Literal }
+func (n *PrefixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(n.Operator + " ")
+
+	if n.Value != nil {
+		out.WriteString(n.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}

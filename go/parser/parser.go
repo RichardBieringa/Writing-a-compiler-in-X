@@ -61,6 +61,8 @@ func New(l *lexer.Lexer) *Parser {
 
 	parser.registerPrefixParseFn(token.IDENT, parser.parseIdentifier)
 	parser.registerPrefixParseFn(token.INT, parser.parseIntegerLiteral)
+	parser.registerPrefixParseFn(token.BANG, parser.parsePrefixExpression)
+	parser.registerPrefixParseFn(token.MINUS, parser.parsePrefixExpression)
 
 	// reads the first two tokens such that
 	// currentToken and peekToken are set
@@ -229,7 +231,9 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 
 func (p *Parser) parseExpression(precedenceLevel int) ast.Expression {
 	prefix := p.prefixParseMap[p.currentToken.Type]
+
 	if prefix == nil {
+		p.errors = append(p.errors, fmt.Sprintf("No prefix parse function found for %q", p.currentToken.Literal))
 		return nil
 	}
 
@@ -245,6 +249,7 @@ func (p *Parser) parseIdentifier() ast.Expression {
 	}
 }
 
+// Parses integer literals e.g.: `5`
 func (p *Parser) parseIntegerLiteral() ast.Expression {
 	val, err := strconv.ParseInt(p.currentToken.Literal, 10, 64)
 	if err != nil {
@@ -256,4 +261,18 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 		Token: p.currentToken,
 		Value: val,
 	}
+}
+
+// Parsing expressions that contain a prefix, e.g. `-5`
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token:    p.currentToken,
+		Operator: p.currentToken.Literal,
+	}
+
+	p.nextToken()
+
+	expression.Value = p.parseExpression(PREFIX)
+
+	return expression
 }
