@@ -165,6 +165,55 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	}
 }
 
+func TestPrefixExpressions(t *testing.T) {
+	testCases := []struct {
+		input        string
+		operator     string
+		integerValue int64
+	}{
+		{"!5;", "!", 5},
+		{"+2;", "+", 2},
+		{"+9001;", "+", 9001},
+	}
+
+	for _, testCase := range testCases {
+		parser := New(lexer.New(testCase.input))
+
+		program := parser.ParseProgram()
+
+		if program == nil {
+			t.Fatalf("Parsing the program failed")
+		}
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("Expected one statement in the program, got=`%d`", len(program.Statements))
+		}
+
+		statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("Expected the node to be an ast.ExpressionStatement, got=`%T`", program.Statements[0])
+		}
+
+		expression, ok := statement.Expression.(*ast.PrefixExpression)
+		if !ok {
+			t.Fatalf("Expected the node to be an ast.PrefixExpression, got=`%T`", statement.Expression)
+		}
+
+		if expression.Operator != testCase.operator {
+			t.Fatalf("Expected ast.PrefixExpression's operator to match %q, got=%q", testCase.operator, expression.Operator)
+		}
+
+		integerLiteral, ok := expression.Value.(*ast.IntegerLiteral)
+		if !ok {
+			t.Fatalf("Expected ast.PrefixExpression's value to be an IntegeerLiteral, got=`%T`", expression.Value)
+		}
+
+		if integerLiteral.Value != testCase.integerValue {
+			t.Fatalf("Expected integer literal value to equal `%d`, got=`%d`", testCase.integerValue, integerLiteral.Value)
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	t.Logf("testLetStatement: %+v, name=%q", statement, name)
 
