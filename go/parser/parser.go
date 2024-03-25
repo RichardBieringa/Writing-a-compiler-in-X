@@ -25,6 +25,14 @@ import (
 	"monkey/token"
 )
 
+type (
+	// parses prefix expressions, e.g. `++var`
+	prefixParseFn func() ast.Expression
+
+	// parses infix expressions, e.g. `5 + 5`
+	infixParseFn func(ast.Expression) ast.Expression
+)
+
 // The Parses uses the tokens produces by the lexer
 // this implementation only looks at the current, and next token (1 lookahead)
 // which means that we can only the type of node by looking at these 2 tokens
@@ -35,6 +43,9 @@ type Parser struct {
 
 	currentToken token.Token // The current token that the parser is consuming
 	peekToken    token.Token // The next token, used for 1 node lookahead
+
+	prefixParseMap map[token.TokenType]prefixParseFn
+	infixParseMap  map[token.TokenType]infixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -42,7 +53,12 @@ func New(l *lexer.Lexer) *Parser {
 	parser := &Parser{
 		l:      l,
 		errors: []string{},
+
+		prefixParseMap: make(map[token.TokenType]prefixParseFn),
+		infixParseMap:  make(map[token.TokenType]infixParseFn),
 	}
+
+	parser.registerPrefixParseFn(token.IDENT, parser.parseIdentifier)
 
 	// reads the first two tokens such that
 	// currentToken and peekToken are set
@@ -50,6 +66,14 @@ func New(l *lexer.Lexer) *Parser {
 	parser.nextToken()
 
 	return parser
+}
+
+func (p *Parser) registerPrefixParseFn(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseMap[tokenType] = fn
+}
+
+func (p *Parser) registerInfixParseFn(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseMap[tokenType] = fn
 }
 
 func (p *Parser) nextToken() {
@@ -126,7 +150,7 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
-		return nil
+		return p.parseExpressionStatement()
 	}
 }
 
@@ -141,8 +165,8 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	}
 
 	statement.Name = &ast.Identifier{
-		Token: p.currentToken,
-		Value: p.currentToken.Literal,
+		Token:      p.currentToken,
+		Identifier: p.currentToken.Literal,
 	}
 
 	if !p.expectPeek(token.ASSIGN) {
@@ -180,8 +204,41 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	}
 
 	slog.Debug("RETURN STATEMENT",
-		"value", statement.Value,
+		"value", statement.Expression,
 	)
 
 	return statement
+}
+
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	statement := &ast.ExpressionStatement{
+		Token: p.currentToken,
+	}
+
+	statement.Expression = p.parseExpression(LOWEST)
+
+	// Allow expressiosn to be without semis
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return statement
+}
+
+func (p *Parser) parseExpression(precedenceLevel int) ast.Expression {
+	prefix := p.prefixParseMap[p.currentToken.Type]
+	if prefix == nil {
+		return nil
+	}
+
+	leftExpression := prefix()
+
+	return leftExpression
+}
+
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{
+		Token:      p.currentToken,
+		Identifier: p.currentToken.Literal,
+	}
 }
