@@ -171,7 +171,7 @@ func (p *Parser) Errors() []string {
 
 // Tries parsing a statement based on the current token
 func (p *Parser) parseStatement() ast.Statement {
-	slog.Info(
+	slog.Debug(
 		"Parser - parseStatement",
 		"token", p.currentToken,
 	)
