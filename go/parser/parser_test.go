@@ -131,6 +131,40 @@ func TestIdentifierExpression(t *testing.T) {
 	}
 }
 
+func TestIntegerLiteralExpression(t *testing.T) {
+	input := "7;"
+
+	parse := New(lexer.New(input))
+
+	program := parse.ParseProgram()
+
+	if program == nil {
+		t.Fatal("Parsing the program returned nil")
+	}
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("Expected one statement, got=`%d`", len(program.Statements))
+	}
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("Expected statement to be an ExpressionStatement, got=`%T`", statement)
+	}
+
+	literal, ok := statement.Expression.(*ast.IntegerLiteral)
+	if !ok {
+		t.Fatalf("Expected expression to be an ast.IntegerLiteral, got=`%T`", literal)
+	}
+
+	if literal.Value != "7" {
+		t.Fatalf("Expected literal's value to equal `7`, got=`%s`", literal.Value)
+	}
+
+	if literal.TokenLiteral() != "foobar" {
+		t.Fatalf("Expected literal's TokenLiteral to equal `7`, got=`%s`", literal.TokenLiteral())
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	t.Logf("testLetStatement: %+v, name=%q", statement, name)
 
