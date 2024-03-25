@@ -98,7 +98,7 @@ func (n *IntegerLiteral) TokenLiteral() string { return n.Token.Literal }
 func (n *IntegerLiteral) String() string       { return n.Token.Literal }
 
 type PrefixExpression struct {
-	Token    token.Token
+	Token    token.Token // the operator token, e.g. `+`
 	Operator string
 	Value    Expression
 }
@@ -120,7 +120,7 @@ func (n *PrefixExpression) String() string {
 }
 
 type InfixExpression struct {
-	Token    token.Token
+	Token    token.Token // the operator token, e.g. `+`
 	Left     Expression
 	Operator string
 	Right    Expression
