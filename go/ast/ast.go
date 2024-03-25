@@ -108,13 +108,11 @@ func (n *PrefixExpression) TokenLiteral() string { return n.Token.Literal }
 func (n *PrefixExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(n.Operator + " ")
+	out.WriteString(n.Operator)
 
 	if n.Value != nil {
 		out.WriteString(n.Value.String())
 	}
-
-	out.WriteString(";")
 
 	return out.String()
 }
@@ -135,13 +133,13 @@ func (n *InfixExpression) String() string {
 		out.WriteString(n.Left.String())
 	}
 
-	out.WriteString(" " + n.Operator + " ")
+	out.WriteString("(" + n.Operator + " ")
 
 	if n.Right != nil {
 		out.WriteString(n.Left.String())
 	}
 
-	out.WriteString(";")
+	out.WriteString(")")
 
 	return out.String()
 }
