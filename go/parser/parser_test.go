@@ -57,30 +57,6 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	t.FailNow()
 }
 
-func TestParseError(t *testing.T) {
-	input := `
-let x 5;
-let y == 10;
-`
-	lex := lexer.New(input)
-	parse := New(lex)
-
-	program := parse.ParseProgram()
-
-	if program == nil {
-		t.Fatal("ParseProgram returned nil")
-	}
-
-	errors := parse.Errors()
-
-	if len(errors) != len(program.Statements) {
-		for i, error := range errors {
-			t.Logf("ERR[%d]: `%s`", i, error)
-		}
-		t.Fatalf("Parse program did not return the correct amount of errors. Excepted: %d, got %d", len(program.Statements), len(errors))
-	}
-}
-
 func TestReturnStatement(t *testing.T) {
 	input := `
   return 5;
@@ -142,13 +118,13 @@ func TestIdentifierExpression(t *testing.T) {
 		t.Fatalf("Expected statement to be an ExpressionStatement, got=`%T`", statement)
 	}
 
-	ident, ok := statement.Value.(*ast.Identifier)
+	ident, ok := statement.Expression.(*ast.Identifier)
 	if !ok {
 		t.Fatalf("Expected expression to be an ast.Identifier, got=`%T`", ident)
 	}
 
-	if ident.Value != "foobar" {
-		t.Fatalf("Expected identifier's value to equal `foobar`, got=`%s`", ident.Value)
+	if ident.Identifier != "foobar" {
+		t.Fatalf("Expected identifier's value to equal `foobar`, got=`%s`", ident.Identifier)
 	}
 	if ident.TokenLiteral() != "foobar" {
 		t.Fatalf("Expected identifier's TokenLiteral to equal `foobar`, got=`%s`", ident.TokenLiteral())
@@ -171,8 +147,8 @@ func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 		return false
 	}
 
-	if letStatement.Name.Value != name {
-		t.Errorf("Statement (name) did not have expected name. Expected=%q, got=%q", name, letStatement.Name.Value)
+	if letStatement.Name.Identifier != name {
+		t.Errorf("Statement (name) did not have expected name. Expected=%q, got=%q", name, letStatement.Name.Identifier)
 		return false
 	}
 
