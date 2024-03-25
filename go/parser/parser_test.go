@@ -283,6 +283,128 @@ func TestInfixExpressions(t *testing.T) {
 	}
 }
 
+func TestOperatorPrecedenceParsing(t *testing.T) {
+	testCases := []struct {
+		input    string
+		expected string
+	}{
+		{
+			"-a * b",
+			"(-a * b)",
+		},
+		{
+			"!-a",
+			"!-a",
+		},
+		{
+			"a + b + c",
+			"((a + b) + c)",
+		},
+		{
+			"a + b - c",
+			"((a + b) - c)",
+		},
+		{
+			"a * b * c",
+			"((a * b) * c)",
+		},
+		{
+			"a * b / c",
+			"((a * b) / c)",
+		},
+		{
+			"a + b / c",
+			"(a + (b / c))",
+		},
+		{
+			"a + b * c + d / e - f",
+			"(((a + (b * c)) + (d / e)) - f)",
+		},
+		{
+			"-5 * -5",
+			"(-5 * -5)",
+		},
+		{
+			"5 > 4 == 3 < 4",
+			"((5 > 4) == (3 < 4))",
+		},
+		{
+			"5 < 4 != 3 > 4",
+			"((5 < 4) != (3 > 4))",
+		},
+		{
+			"3 + 4 * 5 == 3 * 1 + 4 * 5",
+			"((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+		},
+		{
+			"3 + 4 * 5 == 3 * 1 + 4 * 5",
+			"((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+		},
+		{
+			"true",
+			"true",
+		},
+		{
+			"false",
+			"false",
+		},
+		{
+			"3 > 5 == false",
+			"((3 > 5) == false)",
+		},
+		{
+			"3 < 5 == true",
+			"((3 < 5) == true)",
+		},
+		{
+			"1 + (2 + 3) + 4",
+			"((1 + (2 + 3)) + 4)",
+		},
+		{
+			"(5 + 5) * 2",
+			"((5 + 5) * 2)",
+		},
+		{
+			"2 / (5 + 5)",
+			"(2 / (5 + 5))",
+		},
+		{
+			"(5 + 5) * 2 * (5 + 5)",
+			"(((5 + 5) * 2) * (5 + 5))",
+		},
+		{
+			"-(5 + 5)",
+			"-(5 + 5)",
+		},
+		{
+			"!(true == true)",
+			"!(true == true)",
+		},
+		{
+			"a + n.add(b * c) + d",
+			"((a + n.add((b * c))) + d)",
+		},
+		{
+			"n.add(a, b, 1, 2 * 3, 4 + 5, m.add(6, 7 * 8))",
+			"n.add(a, b, 1, (2 * 3), (4 + 5), m.add(6, (7 * 8)))",
+		},
+		{
+			"n.add(a + b + c * d / f + g)",
+			"n.add((((a + b) + ((c * d) / f)) + g))",
+		},
+	}
+
+	for _, testCase := range testCases {
+		parser := New(lexer.New(testCase.input))
+		program := parser.ParseProgram()
+
+		actual := program.String()
+		if actual != testCase.expected {
+			t.Errorf("expcted=%q, got=%q", testCase.expected, actual)
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, statement ast.Statement, name string) bool {
 	t.Logf("testLetStatement: %+v, name=%q", statement, name)
 
