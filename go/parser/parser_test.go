@@ -156,11 +156,11 @@ func TestIntegerLiteralExpression(t *testing.T) {
 		t.Fatalf("Expected expression to be an ast.IntegerLiteral, got=`%T`", literal)
 	}
 
-	if literal.Value != "7" {
-		t.Fatalf("Expected literal's value to equal `7`, got=`%s`", literal.Value)
+	if literal.Value != 7 {
+		t.Fatalf("Expected literal's value to equal `7`, got=`%d`", literal.Value)
 	}
 
-	if literal.TokenLiteral() != "foobar" {
+	if literal.TokenLiteral() != "7" {
 		t.Fatalf("Expected literal's TokenLiteral to equal `7`, got=`%s`", literal.TokenLiteral())
 	}
 }
