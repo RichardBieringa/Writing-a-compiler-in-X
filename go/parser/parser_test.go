@@ -397,6 +397,7 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 	for _, testCase := range testCases {
 		parser := New(lexer.New(testCase.input))
 		program := parser.ParseProgram()
+		checkParserErrors(t, parser)
 
 		actual := program.String()
 		if actual != testCase.expected {
