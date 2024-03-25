@@ -172,8 +172,8 @@ func TestPrefixExpressions(t *testing.T) {
 		integerValue int64
 	}{
 		{"!5;", "!", 5},
-		{"+2;", "+", 2},
-		{"+9001;", "+", 9001},
+		{"-2;", "-", 2},
+		{"-9001;", "-", 9001},
 	}
 
 	for _, testCase := range testCases {
@@ -184,6 +184,8 @@ func TestPrefixExpressions(t *testing.T) {
 		if program == nil {
 			t.Fatalf("Parsing the program failed")
 		}
+
+		checkParserErrors(t, parser)
 
 		if len(program.Statements) != 1 {
 			t.Fatalf("Expected one statement in the program, got=`%d`", len(program.Statements))
