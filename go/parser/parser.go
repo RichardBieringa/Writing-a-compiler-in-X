@@ -266,20 +266,20 @@ func (p *Parser) parseExpression(precedenceLevel int) ast.Expression {
 
 	leftExpression := prefixParser()
 
-	// done
-	if p.peekTokenIs(token.SEMICOLON) || precedenceLevel > p.peekPrecedence() {
-		return leftExpression
+	for !p.peekTokenIs(token.SEMICOLON) && precedenceLevel < p.peekPrecedence() {
+		// should parse infix expression
+		infixParser := p.infixParseMap[p.peekToken.Type]
+		if infixParser == nil {
+			return leftExpression
+		}
+
+		p.nextToken()
+
+		leftExpression = infixParser(leftExpression)
+
 	}
 
-	// should parse infix expression
-	infixParser := p.infixParseMap[p.peekToken.Type]
-	if infixParser == nil {
-		return leftExpression
-	}
-
-	p.nextToken()
-
-	return infixParser(leftExpression)
+	return leftExpression
 }
 
 func (p *Parser) parseIdentifier() ast.Expression {
@@ -293,6 +293,11 @@ func (p *Parser) parseIdentifier() ast.Expression {
 func (p *Parser) parseIntegerLiteral() ast.Expression {
 	val, err := strconv.ParseInt(p.currentToken.Literal, 10, 64)
 	if err != nil {
+		slog.Error("parseIntegerLiteral error",
+			"error", err.Error(),
+			"tokenLiteral", p.currentToken.Literal,
+			"tokenType", p.currentToken.Type,
+		)
 		p.errors = append(p.errors, err.Error())
 		return nil
 	}
