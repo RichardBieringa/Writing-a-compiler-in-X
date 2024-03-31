@@ -75,13 +75,13 @@ func TestMoreSourceCode(t *testing.T) {
 		{
 			Type:     token.SEMICOLON,
 			Literal:  ";",
-			Position: 20,
+			Position: 21,
 			PeekChar: '\x00',
 		},
 		{
 			Type:     token.EOF,
 			Literal:  "",
-			Position: 20,
+			Position: 22,
 			PeekChar: '\x00',
 		},
 	}

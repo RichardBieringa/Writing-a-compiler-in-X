@@ -44,14 +44,7 @@ func New(input string) *Lexer {
 }
 
 func (l *Lexer) readChar() {
-	// reached EOF
-	if l.readPosition >= len(l.input) {
-		l.currentChar = 0
-		return
-	}
-
-	// consume next character
-	l.currentChar = l.input[l.readPosition]
+	l.currentChar = l.peekChar()
 	l.position = l.readPosition
 	l.readPosition += 1
 }
