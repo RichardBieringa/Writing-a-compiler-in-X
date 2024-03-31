@@ -266,8 +266,7 @@ func (p *Parser) parseExpression(precedenceLevel int) ast.Expression {
 
 	leftExpression := prefixParser()
 
-	peekPrecedence := p.peekPrecedence()
-	for !p.peekTokenIs(token.SEMICOLON) && precedenceLevel < peekPrecedence {
+	for !p.peekTokenIs(token.SEMICOLON) && precedenceLevel < p.peekPrecedence() {
 		// should parse infix expression
 		infixParser := p.infixParseMap[p.peekToken.Type]
 		if infixParser == nil {
@@ -277,7 +276,6 @@ func (p *Parser) parseExpression(precedenceLevel int) ast.Expression {
 		p.nextToken()
 
 		leftExpression = infixParser(leftExpression)
-
 	}
 
 	return leftExpression
