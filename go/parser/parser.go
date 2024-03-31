@@ -1,4 +1,4 @@
-// Pagage parser contains a recursive descent parser implementation
+// Package parser contains a recursive descent parser implementation
 // for the monkey programming language
 //
 // The parser constructs an Abstract Syntax Tree (AST) from a series of tokens
@@ -204,9 +204,8 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 		return nil
 	}
 
-	// TODO: assign expression value
-	// p.expectPeek(token.INT)
-	// statement.Value = &ast.Expression{}
+	p.nextToken()
+	statement.Value = p.parseExpression(LOWEST)
 
 	// Consume all tokens up to the semicolon
 	for !p.currentTokenIs(token.SEMICOLON) {
@@ -229,7 +228,8 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 
 	p.nextToken()
 
-	// TODO: parse expressions
+	statement.Expression = p.parseExpression(LOWEST)
+
 	for !p.currentTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
@@ -299,6 +299,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 			"tokenType", p.currentToken.Type,
 		)
 		p.errors = append(p.errors, err.Error())
+
 		return nil
 	}
 
