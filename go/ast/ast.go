@@ -138,7 +138,7 @@ func (n *InfixExpression) String() string {
 	out.WriteString(" " + n.Operator + " ")
 
 	if n.Right != nil {
-		out.WriteString(n.Left.String())
+		out.WriteString(n.Right.String())
 	}
 
 	out.WriteString(")")
