@@ -129,11 +129,13 @@ func (n *InfixExpression) TokenLiteral() string { return n.Token.Literal }
 func (n *InfixExpression) String() string {
 	var out bytes.Buffer
 
+	out.WriteString("(")
+
 	if n.Left != nil {
 		out.WriteString(n.Left.String())
 	}
 
-	out.WriteString("(" + n.Operator + " ")
+	out.WriteString(" " + n.Operator + " ")
 
 	if n.Right != nil {
 		out.WriteString(n.Left.String())
